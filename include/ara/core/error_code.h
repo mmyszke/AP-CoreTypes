@@ -1,4 +1,4 @@
-ifndef ERROR_CODE_H
+#ifndef ERROR_CODE_H
 #define ERROR_CODE_H
 
 namespace ara::core 
