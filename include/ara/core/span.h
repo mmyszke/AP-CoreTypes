@@ -26,7 +26,7 @@ constexpr std::size_t dynamic_extent = std::numeric_limits<std::size_t>::max();
 template<typename T_type, std::size_t Extent = dynamic_extent> class Span
 {
     using span_t = std::span<T_type, Extent>;
-
+    span_t sp;
 
 /**
  * @brief Alias for the type of values in this Span.
@@ -119,7 +119,7 @@ static constexpr index_type extent =  Extent;
  * @req {SWS_CORE_01941}
  */
 constexpr Span () noexcept{
-     span_t{};
+     sp = span_t{};
 }
 
 /**
@@ -174,7 +174,9 @@ constexpr Span (Container &cont);
  * @req {SWS_CORE_01948}
  */
 template <typename Container>
-constexpr Span (Container const &cont);
+constexpr Span (Container const &cont){
+    sp = span_t{cont};
+}
 
 /**
  * @brief Copy construct a new Span from another instance.
@@ -284,7 +286,9 @@ constexpr reference operator[] (index_type idx) const;
  *
  * @req {SWS_CORE_01971}
  */
-constexpr pointer data () const noexcept;
+constexpr pointer data () const noexcept{
+    return sp.data();
+}
 
 /**
  * @brief Return an iterator pointing to the first element of this Span.
