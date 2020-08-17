@@ -27,7 +27,11 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
 {
     using span_t = std::span<T_type, Extent>;
     span_t sp;
+<<<<<<< HEAD
 
+=======
+public:
+>>>>>>> Add test file
 /**
  * @brief Alias for the type of values in this Span.
  *
@@ -82,14 +86,15 @@ using reference = element_type&;
  *
  * @req {SWS_CORE_01917}
  */
-using iterator = element_type::iterator;
+using iterator = pointer;
 
 /**
  * @brief The type of a const_iterator to elements.
  *
  * @req {SWS_CORE_01918}
  */
-using const_iterator = element_type::const_iterator;
+
+using const_iterator = const pointer;
 
 /**
  * @brief The type of a reverse_iterator to elements.
@@ -142,7 +147,9 @@ constexpr Span (pointer firstElem, pointer lastElem);
  * @req {SWS_CORE_01944}
  */
 template <std::size_t N>
-constexpr Span (element_type(&arr)[N]) noexcept;
+constexpr Span (element_type(&arr)[N]) noexcept{
+    sp = span_t{arr};
+}
 
 /**
  * @brief Construct a new Span from the given Array.
