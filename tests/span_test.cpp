@@ -56,7 +56,7 @@ TEST_CASE("Span string test ", "[SWS_CORE], [SWS_CORE_01944]")
 {
     std::string test_str{"Test string"};
 
-    ara::core::Span<int> span{test_str};
+    ara::core::Span<std::string> span{test_str};
 
 
     CHECK(span.data() != NULL);
