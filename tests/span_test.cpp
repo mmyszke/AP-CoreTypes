@@ -51,15 +51,3 @@ TEST_CASE("Span from span ", "[SWS_CORE], [SWS_CORE_01944]")
     CHECK(span2.size() == vect.size());
     CHECK(span2[3] == vect.at(3));
 }
-TEST_CASE("Span string test ", "[SWS_CORE], [SWS_CORE_01944]")
-
-{
-    std::string test_str{"Test string"};
-
-    ara::core::Span<std::string> span{test_str};
-
-
-    CHECK(span.data() != NULL);
-    CHECK(span.size() == test_str.size());
-    CHECK(span[3] == test_str.at(3));
-}

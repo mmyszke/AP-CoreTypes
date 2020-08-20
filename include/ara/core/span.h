@@ -7,6 +7,7 @@
 #include <array>
 #include <limits>
 #include <span>
+#include <memory>
 #ifndef ARA_CORE_SPAN_H_
 #    define ARA_CORE_SPAN_H_
 
@@ -175,9 +176,8 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      *
      * @req {SWS_CORE_01947}
      */
-    template<typename Container> constexpr Span(Container& cont)
-      : sp(
-        std::span<typename Container::value_type, Container::size_type>{cont})
+    template<typename Container> constexpr Span(Container &cont)
+      : sp(std::span<typename Container::value_type, Extent> (cont))
     {}
 
     /**
@@ -186,8 +186,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01948}
      */
     template<class Container> constexpr Span(Container const& cont)
-      : sp(
-        std::span<typename Container::value_type, Container::size_type>{cont})
+       : sp(std::span<typename Container::value_type, Extent> (cont))
     {}
     /**
      * @brief Copy construct a new Span from another instance.
