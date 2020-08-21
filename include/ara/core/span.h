@@ -185,9 +185,11 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      *
      * @req {SWS_CORE_01948}
      */
-    template<class Container> constexpr Span(Container const& cont)
-      : sp(std::span<typename Container::value_type, Extent>(cont))
+    template<typename Container> constexpr Span(Container const& cont)
+      : sp(std::span<T_type>(cont))
     {}
+
+
     /**
      * @brief Copy construct a new Span from another instance.
      *
