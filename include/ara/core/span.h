@@ -89,7 +89,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01917}
      */
 
-    using iterator = typename std::span<T_type>::iterator;
+    using iterator = typename span_t::iterator;
 
     /**
      * @brief The type of a const_iterator to elements.
@@ -97,7 +97,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01918}
      */
 
-    using const_iterator = typename std::span<T_type>::iterator const;
+    using const_iterator = typename span_t::iterator const;
 
     /**
      * @brief The type of a reverse_iterator to elements.
@@ -229,29 +229,40 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01961}
      */
     template<std::size_t Count> constexpr Span<element_type, Count>
-    first() const;
+    first() const
+    {
+        return sp.first();
+    }
 
     /**
      * @brief Return a subspan containing only the first elements of this Span.
      *
      * @req {SWS_CORE_01962}
      */
-    constexpr Span<element_type, dynamic_extent> first(index_type count) const;
+    constexpr Span<element_type, dynamic_extent> first(index_type count) const
+    {
+        return sp.first(count);
+    }
 
     /**
      * @brief Return a subspan containing only the last elements of this Span.
      *
      * @req {SWS_CORE_01963}
      */
-    template<std::size_t Count> constexpr Span<element_type, Count>
-    last() const;
+    template<std::size_t Count> constexpr Span<element_type, Count> last() const
+    {
+        return sp.last();
+    }
 
     /**
      * @brief Return a subspan containing only the last elements of this Span.
      *
      * @req {SWS_CORE_01964}
      */
-    constexpr Span<element_type, dynamic_extent> last(index_type count) const;
+    constexpr Span<element_type, dynamic_extent> last(index_type count) const
+    {
+        return sp.last(count);
+    }
 
     /**
      * @brief Return a subspan of this Span.
