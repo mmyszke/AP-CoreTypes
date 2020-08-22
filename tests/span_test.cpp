@@ -109,5 +109,5 @@ TEST_CASE("Subspan last(par)", "[SWS_CORE], [SWS_CORE_01963]")
 
     CHECK(span_a.data() != NULL);
     CHECK(*span_a.begin() == span[span.size() - 4]);
-    CHECK(*span_a.end() == *span.end());
+    CHECK(*(span_a.end()-1) == *(span.end()-1));
 }

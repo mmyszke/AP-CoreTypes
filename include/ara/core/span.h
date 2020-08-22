@@ -177,7 +177,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01947}
      */
     template<typename Container> constexpr Span(Container& cont)
-      : sp(std::span<typename Container::value_type, Extent>(cont))
+      : sp({span_t{cont}})
     {}
 
     /**
@@ -186,7 +186,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01948}
      */
     template<typename Container> constexpr Span(Container const& cont)
-      : sp(std::span<T_type>(cont))
+      : sp(span_t{cont})
     {}
 
 
