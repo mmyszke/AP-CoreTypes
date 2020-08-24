@@ -276,7 +276,10 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
       -> Span<element_type,
               Count != dynamic_extent
                 ? Count
-                : (Extent != dynamic_extent ? Extent - Offset : dynamic_extent)>;
+                : (Extent != dynamic_extent ? Extent - Offset : dynamic_extent)>
+    {
+        return Span::subspan(Offset, Count);
+    }
 
     /**
      * @brief Return a subspan of this Span.
@@ -286,7 +289,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
     constexpr Span<element_type, dynamic_extent>
     subspan(index_type offset, index_type count = dynamic_extent) const
     {
-        return sp = span_t(offset, count);
+        return {data() + offset, count};
     }
 
     /**
@@ -391,65 +394,63 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
     {
         return sp.crend();
     }
-
-    /**
-     * @brief Create a new Span from the given pointer and size.
-     *
-     * @req {SWS_CORE_01990}
-     */
-    template<typename T> constexpr Span<T>
-    MakeSpan(T* ptr, typename Span<T>::index_type count)
-    {
-        sp = element_type(ptr, count);
-        return sp;
-    }
-
-    /**
-     * @brief Create a new Span from the open range between [firstElem,
-     * lastElem).
-     *
-     * @req {SWS_CORE_01991}
-     */
-    template<typename T> constexpr Span<T> MakeSpan(T* firstElem, T* lastElem)
-    {
-        sp = element_type(firstElem, lastElem);
-        return sp;
-    }
-
-    /**
-     * @brief Create a new Span from the given raw array.
-     *
-     * @req {SWS_CORE_01992}
-     */
-    template<typename T, std::size_t N> constexpr Span<T, N>
-      MakeSpan(T (&arr)[N]) noexcept
-    {
-        return arr;
-    }
-
-    /**
-     * @brief Create a new Span from the given container.
-     *
-     * @req {SWS_CORE_01993}
-     */
-    template<typename Container> constexpr Span<typename Container::value_type>
-    MakeSpan(Container& cont)
-    {
-        return cont;
-    }
-
-    /**
-     * @brief Create a new Span from the given const container.
-     *
-     * @req {SWS_CORE_01994}
-     */
-    template<typename Container>
-    constexpr Span<typename Container::value_type const>
-    MakeSpan(Container const& cont)
-    {
-        return cont;
-    }
 };
+/**
+ * @brief Create a new Span from the given pointer and size.
+ *
+ * @req {SWS_CORE_01990}
+ */
+template<typename T> constexpr Span<T>
+MakeSpan(T* ptr, typename Span<T>::index_type count)
+{
+    return {ptr, count};
+}
+
+/**
+ * @brief Create a new Span from the open range between [firstElem,
+ * lastElem).
+ *
+ * @req {SWS_CORE_01991}
+ */
+template<typename T> constexpr Span<T> MakeSpan(T* firstElem, T* lastElem)
+{
+    return {firstElem, lastElem};
+}
+
+/**
+ * @brief Create a new Span from the given raw array.
+ *
+ * @req {SWS_CORE_01992}
+ */
+template<typename T, std::size_t N> constexpr Span<T, N>
+  MakeSpan(T (&arr)[N]) noexcept
+{
+    return arr;
+}
+
+/**
+ * @brief Create a new Span from the given container.
+ *
+ * @req {SWS_CORE_01993}
+ */
+template<typename Container> constexpr Span<typename Container::value_type>
+MakeSpan(Container& cont)
+{
+    return cont;
+}
+
+/**
+ * @brief Create a new Span from the given const container.
+ *
+ * @req {SWS_CORE_01994}
+ */
+template<typename Container>
+constexpr Span<typename Container::value_type const>
+MakeSpan(Container const& cont)
+{
+    return cont;
+}
+
 }  // namespace ara::core
 
 #endif  // ARA_CORE_SPAN_H_
