@@ -296,7 +296,7 @@ TEST_CASE("Create a new Span from the given raw array.",
     }
 }
 
-TEST_CASE("Create a new Span from the given const container.",
+TEST_CASE("Create a new Span from the given constcontainer.",
           "[SWS_CORE], [SWS_CORE_01994]")
 {
     std::vector<int> const vect{1, 2, 3, 4, 5, 6, 7, 8, 9};

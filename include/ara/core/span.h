@@ -4,12 +4,13 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include <array>
+#ifndef ARA_CORE_SPAN_H_
+#define ARA_CORE_SPAN_H_
+#include "ara/core/array.h"
 #include <limits>
 #include <memory>
 #include <span>
-#ifndef ARA_CORE_SPAN_H_
-#    define ARA_CORE_SPAN_H_
+#include <type_traits>
 
 namespace ara::core {
 /**
@@ -24,9 +25,9 @@ constexpr std::size_t dynamic_extent = std::numeric_limits<std::size_t>::max();
  *
  * @req {SWS_CORE_01900}
  */
-template<typename T_type, std::size_t Extent = dynamic_extent> class Span
+template<typename T, std::size_t Extent = dynamic_extent> class Span
 {
-    using span_t = std::span<T_type, Extent>;
+    using span_t = std::span<T, Extent>;
     span_t sp;
 
 
@@ -36,7 +37,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      *
      * @req {SWS_CORE_01911}
      */
-    using element_type = T_type;
+    using element_type = T;
 
     /**
      * @brief Alias for the type of values in this Span.
@@ -157,8 +158,13 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      *
      * @req {SWS_CORE_01945}
      */
-    template<std::size_t N>
-    constexpr Span(std::array<value_type, N>& arr) noexcept : sp(span_t{arr})
+    template<std::size_t N> constexpr Span(
+      ara::core::Array<value_type, N>& arr,
+      std::enable_if<
+        Extent == dynamic_extent || N == Extent,
+        std::is_convertible<std::remove_pointer<decltype(std::data(arr))>,
+                            T (*)[]>>) noexcept
+      : sp(span_t{arr})
     {}
 
     /**
@@ -167,7 +173,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
      * @req {SWS_CORE_01946}
      */
     template<std::size_t N>
-    constexpr Span(std::array<value_type, N> const& arr) noexcept
+    constexpr Span(ara::core::Array<value_type, N> const& arr) noexcept
       : sp(span_t{arr})
     {}
 
@@ -221,7 +227,7 @@ template<typename T_type, std::size_t Extent = dynamic_extent> class Span
     {
         if (this != &other)
         {
-            sp = std::move(other.sp);
+            sp = other.sp;
         }
         return *this;
     }
