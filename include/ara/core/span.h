@@ -7,6 +7,7 @@
 #ifndef ARA_CORE_SPAN_H_
 #define ARA_CORE_SPAN_H_
 #include "ara/core/array.h"
+#include "ara/core/utility.h"
 #include <limits>
 #include <memory>
 #include <span>
@@ -132,6 +133,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given pointer and size.
      *
      * @req {SWS_CORE_01942}
+     * @param[in] ptr - the pointer
+     * @param[in] count - the number of elements to take from ptr
      */
     constexpr Span(pointer ptr, index_type count) : sp(span_t{ptr, count}) {}
     /**
@@ -139,6 +142,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * lastElem).
      *
      * @req {SWS_CORE_01943}
+     * @param[in] firstElem - pointer to the first element
+     * @param[in] lastElem - pointer to past the last element
      */
     constexpr Span(pointer firstElem, pointer lastElem)
       : sp(span_t{firstElem, lastElem})
@@ -148,6 +153,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given raw array.
      *
      * @req {SWS_CORE_01944}
+     * @tparam[in] N - the size of the raw array
+     * @param[in] arr - the raw array
      */
     template<std::size_t N> constexpr Span(element_type (&arr)[N]) noexcept
       : sp(span_t{arr})
@@ -157,12 +164,15 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given Array.
      *
      * @req {SWS_CORE_01945}
+     * @tparam[in] N - the size of the Array
+     * @param[in] arr - the array
      */
     template<std::size_t N> constexpr Span(
       ara::core::Array<value_type, N>& arr,
       std::enable_if<
         Extent == dynamic_extent || N == Extent,
-        std::is_convertible<std::remove_pointer<decltype(std::data(arr))>,
+        std::is_convertible<typename std::remove_pointer<typename decltype(
+                              ara::core::data(arr))::type>::type (*)[],
                             T (*)[]>>) noexcept
       : sp(span_t{arr})
     {}
@@ -171,6 +181,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given Array.
      *
      * @req {SWS_CORE_01946}
+     * @tparam[in] N - the size of the Array
+     * @param[in] arr - the array
      */
     template<std::size_t N>
     constexpr Span(ara::core::Array<value_type, N> const& arr) noexcept
@@ -181,6 +193,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given container.
      *
      * @req {SWS_CORE_01947}
+     * @tparam[in] Container - the type of container
+     * @param[in] count - the container
      */
     template<typename Container> constexpr Span(Container& cont)
       : sp({span_t{cont}})
@@ -190,6 +204,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Construct a new Span from the given container.
      *
      * @req {SWS_CORE_01948}
+     * @tparam[in] Container - the type of container
+     * @param[in] count - the container
      */
     template<typename Container> constexpr Span(Container const& cont)
       : sp(span_t{cont})
@@ -200,12 +216,16 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Copy construct a new Span from another instance.
      *
      * @req {SWS_CORE_01949}
+     * @param[in] other - the other instance
      */
     constexpr Span(Span const& other) : sp(other.sp) {}
     /**
      * @brief Converting constructor.
      *
      * @req {SWS_CORE_01950}
+     * @tparam[in] U - the type of elements within the other Span
+     * @tparam[in] N - the Extent of the other Span
+     * @param[in] s - the other Span instance
      */
     template<typename U, std::size_t N>
     constexpr Span(Span<U, N> const& s) noexcept : sp(span_t{s})
@@ -222,6 +242,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Copy assignment operator.
      *
      * @req {SWS_CORE_01952}
+     * @param[in] other - the other instance
+     *
+     * @return *this
      */
     Span& operator=(Span const& other)
     {
@@ -235,6 +258,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan containing only the first elements of this Span.
      *
      * @req {SWS_CORE_01961}
+     * @tparam[in] Count - the number of elements to take over
+     *
+     * @return the subspan
      */
     template<std::size_t Count> constexpr Span<element_type, Count>
     first() const
@@ -246,6 +272,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan containing only the first elements of this Span.
      *
      * @req {SWS_CORE_01962}
+     * @param[in] count - the number of elements to take over
+     *
+     * @return the subspan
      */
     constexpr Span<element_type, dynamic_extent> first(index_type count) const
     {
@@ -256,6 +285,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan containing only the last elements of this Span.
      *
      * @req {SWS_CORE_01963}
+     * @tparam[in] Count - the number of elements to take over
+     *
+     * @return the subspan
      */
     template<std::size_t Count> constexpr Span<element_type, Count> last() const
     {
@@ -266,6 +298,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan containing only the last elements of this Span.
      *
      * @req {SWS_CORE_01964}
+     * @param[in] count - the number of elements to take over
+     *
+     * @return the subspan
      */
     constexpr Span<element_type, dynamic_extent> last(index_type count) const
     {
@@ -276,6 +311,10 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan of this Span.
      *
      * @req {SWS_CORE_01965}
+     * @tparam[in] Offset - offset into this Span from which to start
+     * @tparam[in] Count - the number of elements to take over
+     *
+     * @return the subspan
      */
     template<std::size_t Offset, std::size_t Count = dynamic_extent>
     constexpr auto subspan() const
@@ -291,6 +330,10 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a subspan of this Span.
      *
      * @req {SWS_CORE_01966}
+     * @param[in] offset - offset into this Span from which to start
+     * @param[in] count - the number of elements to take over
+     *
+     * @return the subspan
      */
     constexpr Span<element_type, dynamic_extent>
     subspan(index_type offset, index_type count = dynamic_extent) const
@@ -302,6 +345,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return the size of this Span.
      *
      * @req {SWS_CORE_01967}
+     *
+     * @return the number of elements contained in this Span
      */
     constexpr index_type size() const noexcept { return sp.size(); }
 
@@ -309,6 +354,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return the size of this Span in bytes.
      *
      * @req {SWS_CORE_01968}
+     *
+     * @return the number of bytes covered by this Span
      */
     constexpr index_type size_bytes() const noexcept { return sp.size_bytes(); }
 
@@ -316,6 +363,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return whether this Span is empty.
      *
      * @req {SWS_CORE_01969}
+     *
+     * @return true if this Span contains 0 elements, false otherwise
      */
     constexpr bool empty() const noexcept { return sp.empty(); }
 
@@ -323,6 +372,9 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a reference to the n-th element of this Span.
      *
      * @req {SWS_CORE_01970}
+     * @param[in] idx - the index into this Span
+     *
+     * @return the reference
      */
     constexpr reference operator[](index_type idx) const { return sp[idx]; }
 
@@ -331,6 +383,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * Span.
      *
      * @req {SWS_CORE_01971}
+     *
+     * @return the pointer
      */
     constexpr pointer data() const noexcept { return sp.data(); }
 
@@ -338,13 +392,17 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return an iterator pointing to the first element of this Span.
      *
      * @req {SWS_CORE_01972}
+     *
+     * @return the iterator
      */
     constexpr iterator begin() const noexcept { return sp.begin(); }
 
     /**
      * @brief Return an iterator pointing past the last element of this Span.
      *
-     * @req {SWS_CORE_01973}ech
+     * @req {SWS_CORE_01973}
+     *
+     * @return the iterator
      */
     constexpr iterator end() const noexcept { return sp.end(); }
 
@@ -352,6 +410,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @brief Return a const_iterator pointing to the first element of this Span.
      *
      * @req {SWS_CORE_01974}
+     *
+     * @return the const_iterator
      */
     constexpr pointer cbegin() const noexcept { return sp.cbegin(); }
 
@@ -360,6 +420,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * Span.
      *
      * @req {SWS_CORE_01975}
+     *
+     * @return the const_iterator
      */
     constexpr pointer cend() const noexcept { return sp.cend(); }
 
@@ -368,6 +430,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * Span.
      *
      * @req {SWS_CORE_01976}
+     *
+     * @return the the reverse_iterator
      */
     constexpr reverse_iterator rbegin() const noexcept { return sp.rbegin(); }
 
@@ -376,6 +440,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * Span.
      *
      * @req {SWS_CORE_01977}
+     *
+     * @return the the reverse_iterator
      */
     constexpr reverse_iterator rend() const noexcept { return sp.rend(); }
 
@@ -384,6 +450,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * this Span.
      *
      * @req {SWS_CORE_01978}
+     *
+     * @return the const_reverse_iterator
      */
     constexpr const_reverse_iterator crbegin() const noexcept
     {
@@ -395,6 +463,8 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * this Span.
      *
      * @req {SWS_CORE_01979}
+     *
+     * @return the reverse_iterator
      */
     constexpr const_reverse_iterator crend() const noexcept
     {
@@ -405,6 +475,11 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
  * @brief Create a new Span from the given pointer and size.
  *
  * @req {SWS_CORE_01990}
+ * @param[in] T - the type of elements
+ * @param[in] ptr - the pointer
+ * @param[in] count - the number of elements to take from ptr
+ *
+ * @return the new Span
  */
 template<typename T> constexpr Span<T>
 MakeSpan(T* ptr, typename Span<T>::index_type count)
@@ -417,6 +492,11 @@ MakeSpan(T* ptr, typename Span<T>::index_type count)
  * lastElem).
  *
  * @req {SWS_CORE_01991}
+ * @param[in] T - the type of elements
+ * @param[in] firstElem - pointer to the first element
+ * @param[in] lastElem - pointer to past the last element
+ *
+ * @return the new Span
  */
 template<typename T> constexpr Span<T> MakeSpan(T* firstElem, T* lastElem)
 {
@@ -427,6 +507,11 @@ template<typename T> constexpr Span<T> MakeSpan(T* firstElem, T* lastElem)
  * @brief Create a new Span from the given raw array.
  *
  * @req {SWS_CORE_01992}
+ * @param[in] T - the type of elements
+ * @param[in] N - the size of the raw array
+ * @param[in] arr - the raw array
+ *
+ * @return the new Span
  */
 template<typename T, std::size_t N> constexpr Span<T, N>
   MakeSpan(T (&arr)[N]) noexcept
@@ -438,6 +523,9 @@ template<typename T, std::size_t N> constexpr Span<T, N>
  * @brief Create a new Span from the given container.
  *
  * @req {SWS_CORE_01993}
+ * @param[in] cont - the container
+ *
+ * @return the new Span
  */
 template<typename Container> constexpr Span<typename Container::value_type>
 MakeSpan(Container& cont)
@@ -449,6 +537,9 @@ MakeSpan(Container& cont)
  * @brief Create a new Span from the given const container.
  *
  * @req {SWS_CORE_01994}
+ * @param[in] cont - the container
+ *
+ * @return the new Span
  */
 template<typename Container>
 constexpr Span<typename Container::value_type const>

@@ -9,7 +9,7 @@
 #define ARA_CORE_BYTE_H_
 
 #include <cstddef>
-
+#include <cstdint>  // uint8_t
 namespace ara::core {
 /**
  * @brief Wrapper class for std::byte class object.
@@ -19,7 +19,7 @@ namespace ara::core {
 class ByteImpl
 {
  public:
-    using ByteType = uint8_t;
+    using ByteType = std::uint8_t;
 
     /**
      * @brief Construct a new Byte Impl object with no defined value.

@@ -1,11 +1,8 @@
 #include "ara/core/span.h"
 #include <catch2/catch.hpp>
-#include <iostream>
-#include <string>
 #include <vector>
 
 TEST_CASE("Subspan pointer size", "[SWS_CORE], [SWS_CORE_01942]")
-
 {
     int tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -18,7 +15,6 @@ TEST_CASE("Subspan pointer size", "[SWS_CORE], [SWS_CORE_01942]")
 }
 
 TEST_CASE("Subspan pointer range", "[SWS_CORE], [SWS_CORE_01943]")
-
 {
     int tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -31,7 +27,6 @@ TEST_CASE("Subspan pointer range", "[SWS_CORE], [SWS_CORE_01943]")
 }
 
 TEST_CASE("Span test raw array construct", "[SWS_CORE], [SWS_CORE_01944]")
-
 {
     int             arr[]{0, 1, 2, 3, 4};
     ara::core::Span span(arr);
@@ -41,7 +36,6 @@ TEST_CASE("Span test raw array construct", "[SWS_CORE], [SWS_CORE_01944]")
 }
 
 TEST_CASE("Span std::array construct", "[SWS_CORE], [SWS_CORE_01945]")
-
 {
     std::array<int, 5> arr{1, 2, 3, 4, 5};
 
@@ -53,7 +47,6 @@ TEST_CASE("Span std::array construct", "[SWS_CORE], [SWS_CORE_01945]")
 }
 
 TEST_CASE("Span std::array construct const ", "[SWS_CORE], [SWS_CORE_01946]")
-
 {
     std::array<int, 5> const arr = {1, 2, 3, 4, 5};
 
@@ -63,8 +56,8 @@ TEST_CASE("Span std::array construct const ", "[SWS_CORE], [SWS_CORE_01946]")
     CHECK(span.size() == arr.size());
     CHECK(span[3] == arr.at(3));
 }
-TEST_CASE("Span container construct {}", "[SWS_CORE], [SWS_CORE_01947]")
 
+TEST_CASE("Span container construct {}", "[SWS_CORE], [SWS_CORE_01947]")
 {
     std::vector<int>     vect{1, 2, 3, 4, 5};
     ara::core::Span<int> span_a{vect};
@@ -74,8 +67,8 @@ TEST_CASE("Span container construct {}", "[SWS_CORE], [SWS_CORE_01947]")
     CHECK(span_a.size() == vect.size());
     CHECK(span_a[3] == vect.at(3));
 }
-TEST_CASE("Span container const construct {}", "[SWS_CORE], [SWS_CORE_01948]")
 
+TEST_CASE("Span container const construct {}", "[SWS_CORE], [SWS_CORE_01948]")
 {
     std::vector<int> const     vect{1, 2, 3, 4, 5};
     ara::core::Span<const int> span_a{vect};
@@ -85,9 +78,9 @@ TEST_CASE("Span container const construct {}", "[SWS_CORE], [SWS_CORE_01948]")
     CHECK(span_a.size() == vect.size());
     CHECK(span_a[3] == vect.at(3));
 }
+
 TEST_CASE("Copy construct a new Span from another instance",
           "[SWS_CORE], [SWS_CORE_01949]")
-
 {
     std::vector<int> const     vect{1, 2, 3, 4, 5};
     ara::core::Span<const int> span_a{vect};
@@ -100,8 +93,8 @@ TEST_CASE("Copy construct a new Span from another instance",
     CHECK(span_a.end() == span_b.end());
     CHECK(span_a[3] == span_b[3]);
 }
-TEST_CASE("Converting constructor", "[SWS_CORE], [SWS_CORE_01950]")
 
+TEST_CASE("Converting constructor", "[SWS_CORE], [SWS_CORE_01950]")
 {
 
     int                     arr[]{0, 1, 2, 3, 4};
@@ -115,7 +108,6 @@ TEST_CASE("Converting constructor", "[SWS_CORE], [SWS_CORE_01950]")
 }
 
 TEST_CASE("Copy assignment operator", "[SWS_CORE], [SWS_CORE_01952]")
-
 {
 
     int                     arr[]{0, 1, 2, 3, 4};
@@ -130,7 +122,6 @@ TEST_CASE("Copy assignment operator", "[SWS_CORE], [SWS_CORE_01952]")
 
 TEST_CASE("Return a subspan containing only the first elements of this Span",
           "[SWS_CORE], [SWS_CORE_01961]")
-
 {
 
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -149,7 +140,6 @@ TEST_CASE("Return a subspan containing only the first elements of this Span",
 }
 
 TEST_CASE("Subspan first(par) dynamic", "[SWS_CORE], [SWS_CORE_01962]")
-
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -167,7 +157,6 @@ TEST_CASE("Subspan first(par) dynamic", "[SWS_CORE], [SWS_CORE_01962]")
 }
 
 TEST_CASE("Subspan last(par) static", "[SWS_CORE], [SWS_CORE_01963]")
-
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -183,8 +172,8 @@ TEST_CASE("Subspan last(par) static", "[SWS_CORE], [SWS_CORE_01963]")
         ++index;
     }
 }
-TEST_CASE("Subspan last(par) dynamic", "[SWS_CORE], [SWS_CORE_01964]")
 
+TEST_CASE("Subspan last(par) dynamic", "[SWS_CORE], [SWS_CORE_01964]")
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -202,7 +191,6 @@ TEST_CASE("Subspan last(par) dynamic", "[SWS_CORE], [SWS_CORE_01964]")
 }
 
 TEST_CASE("Return a subspan of this Span<>", "[SWS_CORE], [SWS_CORE_01965]")
-
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -219,9 +207,7 @@ TEST_CASE("Return a subspan of this Span<>", "[SWS_CORE], [SWS_CORE_01965]")
     }
 }
 
-
 TEST_CASE("Return a subspan of this Span()", "[SWS_CORE], [SWS_CORE_01966]")
-
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -237,17 +223,17 @@ TEST_CASE("Return a subspan of this Span()", "[SWS_CORE], [SWS_CORE_01966]")
         ++index;
     }
 }
-TEST_CASE("Return the size of this Span.", "[SWS_CORE], [SWS_CORE_01967]")
 
+TEST_CASE("Return the size of this Span.", "[SWS_CORE], [SWS_CORE_01967]")
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
     CHECK(span_a.data() != nullptr);
     CHECK(span_a.size() == sizeof(tab) / sizeof(int));
 }
+
 TEST_CASE(" Return the size of this Span in bytes.",
           "[SWS_CORE], [SWS_CORE_01968]")
-
 {
     int                     tab[9]{1, 2, 3, 4, 5, 6, 7, 8, 9};
     ara::core::Span<int, 9> span_a{tab};
@@ -268,6 +254,7 @@ TEST_CASE("Create a new Span from the given pointer and size.",
         ++index;
     }
 }
+
 TEST_CASE("Create a new Span from the open range",
           "[SWS_CORE], [SWS_CORE_01991]")
 {
