@@ -6,11 +6,10 @@
  */
 #ifndef ARA_CORE_SPAN_H_
 #define ARA_CORE_SPAN_H_
-#include "ara/core/array.h"
-#include "ara/core/utility.h"
-#include <limits>
-#include <memory>
-#include <span>
+#include "ara/core/array.h"  // Array
+#include "ara/core/utility.h" // data
+#include <limits>  // numeric_limits
+#include <span> // span
 #include <type_traits>
 
 namespace ara::core {
@@ -30,8 +29,6 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
 {
     using span_t = std::span<T, Extent>;
     span_t sp;
-
-
  public:
     /**
      * @brief Alias for the type of values in this Span.
@@ -136,7 +133,10 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @param[in] ptr - the pointer
      * @param[in] count - the number of elements to take from ptr
      */
-    constexpr Span(pointer ptr, index_type count) : sp(span_t{ptr, count}) {}
+    constexpr Span(pointer ptr, index_type count) : sp(span_t{ptr,  count}) {
+      static_assert(std::is_same_v<decltype(*ptr), decltype(*(ptr+count))>, "Is valid range?");
+      static_assert(Extent != dynamic_extent  ? (count == Extent) : (true), "Is valid?");
+    }
     /**
      * @brief Construct a new Span from the open range between [firstElem,
      * lastElem).
@@ -146,8 +146,10 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @param[in] lastElem - pointer to past the last element
      */
     constexpr Span(pointer firstElem, pointer lastElem)
-      : sp(span_t{firstElem, lastElem})
-    {}
+      : sp(span_t{firstElem, lastElem}) {
+      static_assert(std::is_same_v<decltype(firstElem), decltype(lastElem)>, "Is valid range?");
+      static_assert(Extent != dynamic_extent ? (Extent == (lastElem - firstElem)) : (true), "Is valid?");
+    }
 
     /**
      * @brief Construct a new Span from the given raw array.
@@ -156,7 +158,12 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @tparam[in] N - the size of the raw array
      * @param[in] arr - the raw array
      */
-    template<std::size_t N> constexpr Span(element_type (&arr)[N]) noexcept
+    template<std::size_t N> constexpr Span(element_type (&arr)[N],
+      std::enable_if<
+        Extent == dynamic_extent || N == Extent,
+        std::is_convertible<typename std::remove_pointer<typename decltype(
+                              ara::core::data(arr))::type>::type(*)[],
+                            T (*)[]>>) noexcept
       : sp(span_t{arr})
     {}
 
@@ -172,7 +179,7 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
       std::enable_if<
         Extent == dynamic_extent || N == Extent,
         std::is_convertible<typename std::remove_pointer<typename decltype(
-                              ara::core::data(arr))::type>::type (*)[],
+                              ara::core::data(arr))::type>::type(*)[],
                             T (*)[]>>) noexcept
       : sp(span_t{arr})
     {}
@@ -185,7 +192,11 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @param[in] arr - the array
      */
     template<std::size_t N>
-    constexpr Span(ara::core::Array<value_type, N> const& arr) noexcept
+    constexpr Span(ara::core::Array<value_type, N> const& arr,std::enable_if<
+        Extent == dynamic_extent || N == Extent,
+        std::is_convertible<typename std::remove_pointer<typename decltype(
+                              ara::core::data(arr))::type>::type(*)[],
+                            T (*)[]>>) noexcept
       : sp(span_t{arr})
     {}
 
@@ -196,9 +207,16 @@ template<typename T, std::size_t Extent = dynamic_extent> class Span
      * @tparam[in] Container - the type of container
      * @param[in] count - the container
      */
-    template<typename Container> constexpr Span(Container& cont)
+    template<typename Container> constexpr Span(Container& cont,
+    std::enable_if<
+        std::is_convertible<typename std::remove_pointer<typename decltype(
+                              ara::core::data(cont))::type>::type(*)[],
+                            T (*)[]>::value>)
       : sp({span_t{cont}})
-    {}
+    {
+      static_assert(std::is_same_v<decltype(ara::core::data(cont)), decltype(ara::core::size(cont)+ara::core::data(cont))>, "Is valid range?");
+      static_assert(Extent != dynamic_extent ? (Extent == ara::core::data(cont)) : (true), "Is valid?");
+    }
 
     /**
      * @brief Construct a new Span from the given container.

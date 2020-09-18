@@ -29,7 +29,7 @@ TEST_CASE("Subspan pointer range", "[SWS_CORE], [SWS_CORE_01943]")
 TEST_CASE("Span test raw array construct", "[SWS_CORE], [SWS_CORE_01944]")
 {
     int             arr[]{0, 1, 2, 3, 4};
-    ara::core::Span span(arr);
+    ara::core::Span<int> span(arr);
 
     CHECK(span.data() == arr);
     CHECK(span[3] == arr[3]);
